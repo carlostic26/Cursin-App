@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'home_screen.dart';
+import 'package:cupertino_icons/cupertino_icons.dart';
 
-class addcourse extends StatelessWidget {
+class addcoursebyusers extends StatelessWidget {
   TextEditingController nameCourse = TextEditingController();
   TextEditingController entCourse = TextEditingController();
   TextEditingController certCourse = TextEditingController();
@@ -14,7 +14,8 @@ class addcourse extends StatelessWidget {
   TextEditingController imgUrlCourse = TextEditingController();
 
   //crea una nueva coleccion el firestore database llamada cursos, igual que como se hizo con usuarios
-  CollectionReference ref = FirebaseFirestore.instance.collection('cursos');
+  CollectionReference ref =
+      FirebaseFirestore.instance.collection('cursosusers');
 
   @override
   Widget build(BuildContext context) {

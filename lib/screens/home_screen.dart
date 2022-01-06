@@ -3,8 +3,10 @@ import 'package:cursin/model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/material/drawer_header.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'course_adding.dart';
+import 'course_adding_by_users.dart';
 import 'course_edit.dart';
 import 'course_information.dart';
 import 'login_screen.dart';
@@ -43,8 +45,13 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.grey[850],
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          /* //para ir a add course directamene
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => addcourse()));
+           context, MaterialPageRoute(builder: (_) => addcourse())
+          );
+          */
+
+          _showDialog(context);
         },
         child: Icon(
           Icons.add,
@@ -125,18 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Image.network(snapshot.data!
                                     .docChanges[index].doc['imgUrlCourse']),
                               ),
-                              /*
-                                leading: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    minWidth: 64,
-                                    minHeight: 64,
-                                    maxWidth: 64,
-                                    maxHeight: 64,
-                                  ),
-                                  child: Image.network(snapshot.data!
-                                      .docChanges[index].doc['imgUrlCourse']),
-                                ),
-                                */
+
                               //OPACIDAD DEL COLOR DEL LIST TILE
                               //tileColor: Colors.black.withOpacity(0.5),
                               shape: RoundedRectangleBorder(
@@ -196,6 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _getDrawer(BuildContext context) {
+    TextEditingController pass = TextEditingController();
     return Drawer(
       elevation: 0,
       child: Container(
@@ -252,6 +249,151 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () => showHome(context),
             ),
             ListTile(
+              //Dialogo que los manda a la play store pidiendo reseña
+              title: Text("Diplomados", style: TextStyle(color: Colors.white)),
+              leading: Icon(
+                Icons.school,
+                color: Colors.white,
+              ),
+              //at press, run the method
+              onTap: () => showHome(context),
+            ),
+            ListTile(
+                //Dialogo que los manda a la play store pidiendo reseña
+                title: Text("Añadir un curso",
+                    style: TextStyle(color: Colors.white)),
+                leading: Icon(
+                  Icons.school,
+                  color: Colors.white,
+                ),
+                //at press, run the method
+                onTap: () => {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return SimpleDialog(
+                                title: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "¿Quieres agregar un nuevo curso?",
+                                        style: TextStyle(
+                                            color: Colors.blue, fontSize: 20.0),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        'Puedes añadir cursos gratuitos a la lista. \nEl equipo de Cursin las validará y publicará si se ajustan a los contenidos',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 14.0),
+                                      ),
+                                    ]),
+                                children: <Widget>[
+                                  Container(
+                                    height: 10.0,
+                                    child: ListTile(
+                                        title: Text(""),
+                                        //leading: Icon(Icons.add),
+                                        onTap: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return SimpleDialog(children: <
+                                                    Widget>[
+                                                  Container(
+                                                    child: TextField(
+                                                      controller: pass,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        hintText: 'pass',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  //boton aceptar pass
+                                                  Container(
+                                                    alignment:
+                                                        Alignment.topCenter,
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 5.0),
+                                                    child: ElevatedButton(
+                                                        style: ButtonStyle(
+                                                          shape: MaterialStateProperty
+                                                              .all<
+                                                                  RoundedRectangleBorder>(
+                                                            RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          18.0),
+                                                              side: BorderSide(
+                                                                color: Colors
+                                                                    .blueAccent,
+                                                                width: 2.0,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        child: Text(
+                                                          'ok',
+                                                          style: TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                        //when user press "De acuerdo", it wil continue to add course dialog to pass another screen
+                                                        onPressed: () => {
+                                                              if (pass.text ==
+                                                                  "6819")
+                                                                {
+                                                                  Navigator.pushReplacement(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (_) =>
+                                                                              addcourse()))
+                                                                }
+                                                            }),
+                                                  ),
+                                                ]);
+                                              });
+                                        }),
+                                  ),
+                                  Container(
+                                    alignment: Alignment.topCenter,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 5.0),
+                                    child: ElevatedButton(
+                                      style: ButtonStyle(
+                                        shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(18.0),
+                                            side: BorderSide(
+                                              color: Colors.blueAccent,
+                                              width: 2.0,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'Agregar un Curso',
+                                        style: TextStyle(
+                                            fontSize: 15, color: Colors.white),
+                                      ),
+                                      //when user press "De acuerdo", it wil continue to add course dialog to pass another screen
+                                      onPressed: () =>
+                                          _showDialogAddCourseByUser(context),
+                                    ),
+                                  ),
+                                ]);
+                          }),
+                    }),
+            ListTile(
               //Nombre de la app, objetivo, parrafo de uso basico, creador, linkedin de creador, etc
               title:
                   Text("Info de la App", style: TextStyle(color: Colors.white)),
@@ -286,6 +428,133 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  //Dialogo para agregar cursos
+
+  void _showDialog(BuildContext context) {
+    TextEditingController pass = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+              title: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "¿Quieres agregar un nuevo curso?",
+                      style: TextStyle(color: Colors.blue, fontSize: 20.0),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Puedes añadir cursos gratuitos a la lista. \nEl equipo de Cursin las validará y publicará si se ajustan a los contenidos',
+                      style: TextStyle(color: Colors.black, fontSize: 14.0),
+                    ),
+                  ]),
+              children: <Widget>[
+                Container(
+                  height: 10.0,
+                  child: ListTile(
+                      title: Text(""),
+                      //leading: Icon(Icons.add),
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return SimpleDialog(children: <Widget>[
+                                Container(
+                                  child: TextField(
+                                    controller: pass,
+                                    decoration: InputDecoration(
+                                      hintText: 'pass',
+                                    ),
+                                  ),
+                                ),
+                                //boton aceptar pass
+                                Container(
+                                  alignment: Alignment.topCenter,
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 5.0),
+                                  child: ElevatedButton(
+                                      style: ButtonStyle(
+                                        shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(18.0),
+                                            side: BorderSide(
+                                              color: Colors.blueAccent,
+                                              width: 2.0,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'ok',
+                                        style: TextStyle(
+                                            fontSize: 15, color: Colors.white),
+                                      ),
+                                      //when user press "De acuerdo", it wil continue to add course dialog to pass another screen
+                                      onPressed: () => {
+                                            if (pass.text == "6819")
+                                              {
+                                                Navigator.pushReplacement(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (_) =>
+                                                            addcourse()))
+                                              }
+                                          }),
+                                ),
+                              ]);
+                            });
+                      }),
+                ),
+                Container(
+                  alignment: Alignment.topCenter,
+                  padding: EdgeInsets.symmetric(horizontal: 5.0),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                          side: BorderSide(
+                            color: Colors.blueAccent,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      'Agregar un Curso',
+                      style: TextStyle(fontSize: 15, color: Colors.white),
+                    ),
+                    //when user press "De acuerdo", it wil continue to add course dialog to pass another screen
+                    onPressed: () => _showDialogAddCourseByUser(context),
+                  ),
+                ),
+              ]);
+        });
+  }
+
+  void _showDialogAddCourseByUser(BuildContext context) {
+    Navigator.pop(context);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(children: <Widget>[
+            ListTile(
+                title: Text("Agregar nuevo curso"),
+                leading: Icon(Icons.add),
+                onTap: () {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (_) => addcoursebyusers()));
+                }),
+          ]);
+        });
   }
 
   void showHome(BuildContext context) {

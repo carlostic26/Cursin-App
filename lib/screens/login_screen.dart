@@ -53,6 +53,8 @@ class _loginScreenState extends State<loginScreen> {
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Email",
           hintStyle: TextStyle(color: Colors.white38),
+          fillColor: Colors.white24,
+          filled: true,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -82,6 +84,8 @@ class _loginScreenState extends State<loginScreen> {
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.vpn_key, color: Colors.white38),
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          fillColor: Colors.white24,
+          filled: true,
           hintText: "Password",
           hintStyle: TextStyle(color: Colors.white38),
           border: OutlineInputBorder(
