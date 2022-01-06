@@ -228,7 +228,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     UserModel userModel = UserModel();
 
     // writing all the values | user!.email;
-    userModel.email = user.email;
+    userModel.email = user!.email;
     userModel.uid = user.uid;
     userModel.name = nameEditingController.text;
 

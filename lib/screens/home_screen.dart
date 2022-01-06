@@ -2,7 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cursin/model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/src/material/drawer_header.dart';
 
+import 'course_adding.dart';
+import 'course_edit.dart';
+import 'course_information.dart';
 import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,6 +17,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final Stream<QuerySnapshot>
+      _usersStream = //Aqui va y busca en firestore esta colleccion para mostrarla
+      FirebaseFirestore.instance.collection('cursos').snapshots();
+
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
 
@@ -32,58 +40,256 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[850],
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => addcourse()));
+        },
         child: Icon(
           Icons.add,
         ),
       ),
       appBar: AppBar(
-        title: Text("Bienvenido"),
+        title: Text(
+          "Cursos Gratis con Certificado",
+          style: TextStyle(
+            fontSize: 16.0, /*fontWeight: FontWeight.bold*/
+          ),
+        ),
         centerTitle: true,
       ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(
-                height: 150,
-                child: Image.asset("assets/logo_ticnoticos_2.png",
-                    fit: BoxFit.contain),
+      body: StreamBuilder(
+          stream: _usersStream,
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return Text("something is wrong");
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            return Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: 5.0,
+                vertical: 5.0,
               ),
-              Text(
-                "Welcome Back",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
               ),
-              SizedBox(
-                height: 10,
+              child: ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (_, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => //aqui al tocar item de lista se pasa a su respectiva pantalla de editar
+                                  //que puede ser reemplazada por la de INFO CURSO en completos
+                                  infocourse(docid: snapshot.data!.docs[index]),
+                        ),
+                      ); //paso a la otra pantalla
+                    },
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: 3,
+                            right: 3,
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors
+                                    .grey[700], // Your desired background color
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black.withOpacity(0.9),
+                                      blurRadius: 6),
+                                ]),
+                            child: ListTile(
+                              //ICONO O IMG DEL ITEM
+                              //leading: const Icon(Icons.flight_land),
+
+                              leading: SizedBox(
+                                height: 100.0,
+                                width: 80.0,
+                                child: Image.network(snapshot.data!
+                                    .docChanges[index].doc['imgUrlCourse']),
+                              ),
+                              /*
+                                leading: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    minWidth: 64,
+                                    minHeight: 64,
+                                    maxWidth: 64,
+                                    maxHeight: 64,
+                                  ),
+                                  child: Image.network(snapshot.data!
+                                      .docChanges[index].doc['imgUrlCourse']),
+                                ),
+                                */
+                              //OPACIDAD DEL COLOR DEL LIST TILE
+                              //tileColor: Colors.black.withOpacity(0.5),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+
+                              //Aqui solo muestra en el ListView de Home el contenido de snapshot
+                              //en este caso solo los cursos titulo y subtitulo
+
+                              title: Text(
+                                snapshot
+                                    .data!.docChanges[index].doc['nameCourse'],
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  //COLOR DEL TEXTO TITULO
+                                  color: Colors.blueAccent,
+                                ),
+                              ),
+
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    snapshot.data!.docChanges[index]
+                                        .doc['entCourse'],
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Valoración: ${snapshot.data!.docChanges[index].doc["valCourse"]}/10",
+                                    style: TextStyle(
+                                      fontSize: 8,
+                                      color: Colors.yellowAccent,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 9,
+                                horizontal: 16,
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                },
               ),
-              Text("${loggedInUser.name}",
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w500,
-                  )),
-              Text("${loggedInUser.email}",
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w500,
-                  )),
-              SizedBox(
-                height: 15,
+            );
+          }),
+      drawer: _getDrawer(context),
+    );
+  }
+
+  Widget _getDrawer(BuildContext context) {
+    return Drawer(
+      elevation: 0,
+      child: Container(
+        color: Colors.grey[850],
+        child: ListView(
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text(loggedInUser.name.toString()),
+              accountEmail: Text(loggedInUser.email.toString()),
+              currentAccountPicture: Image.network(
+                  "https://www.homestaynetwork.org/wp-content/uploads/2016/05/students-icon.png"),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [Colors.blueAccent, Colors.grey.shade900]),
               ),
-              ActionChip(
-                  label: Text("Logout"),
-                  onPressed: () {
-                    logout(context);
-                  }),
-            ],
+            ),
+
+            /* //another drawer header if we need
+          DrawerHeader(
+            decoration: BoxDecoration(color: Colors.blueAccent),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                //LOGO IMG AVATAR STUDENT ONLY MULTISEX
+                FlutterLogo(
+                  size: 100,
+                ),
+                Text(
+                  "Name",
+                  style: TextStyle(color: Colors.black),
+                )
+              ],
+            ),
           ),
+          */
+
+            ListTile(
+              title: Text("Inicio", style: TextStyle(color: Colors.white)),
+              leading: Icon(
+                Icons.home,
+                color: Colors.white,
+              ),
+              //at press, run the method
+              onTap: () => showHome(context),
+            ),
+            ListTile(
+              title: Text("Categorías", style: TextStyle(color: Colors.white)),
+              leading: Icon(
+                Icons.category,
+                color: Colors.white,
+              ),
+              //at press, run the method
+              onTap: () => showHome(context),
+            ),
+            ListTile(
+              //Nombre de la app, objetivo, parrafo de uso basico, creador, linkedin de creador, etc
+              title:
+                  Text("Info de la App", style: TextStyle(color: Colors.white)),
+              leading: Icon(
+                Icons.info,
+                color: Colors.white,
+              ),
+              //at press, run the method
+              onTap: () => showHome(context),
+            ),
+            ListTile(
+              //Dialogo que los manda a la play store pidiendo reseña
+              title: Text("Califícanos", style: TextStyle(color: Colors.white)),
+              leading: Icon(
+                Icons.star,
+                color: Colors.white,
+              ),
+              //at press, run the method
+              onTap: () => showHome(context),
+            ),
+            ListTile(
+              title:
+                  Text("Cerrar sesión", style: TextStyle(color: Colors.white)),
+              leading: Icon(
+                Icons.logout,
+                color: Colors.white,
+              ),
+              //at press, run the method
+              onTap: () => logout(context),
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  void showHome(BuildContext context) {
+    Navigator.pop(context);
   }
 
   Future<void> logout(BuildContext context) async {

@@ -1,10 +1,8 @@
 import 'dart:ui';
-
 import 'package:cursin/screens/registration_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
 import 'home_screen.dart';
 
 // ignore: camel_case_types
@@ -51,11 +49,15 @@ class _loginScreenState extends State<loginScreen> {
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.mail),
+          prefixIcon: Icon(Icons.mail, color: Colors.white38),
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Email",
+          hintStyle: TextStyle(color: Colors.white38),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white38),
           ),
         ));
 
@@ -78,11 +80,15 @@ class _loginScreenState extends State<loginScreen> {
         },
         textInputAction: TextInputAction.done,
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.vpn_key),
+          prefixIcon: Icon(Icons.vpn_key, color: Colors.white38),
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Password",
+          hintStyle: TextStyle(color: Colors.white38),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white38),
           ),
         ));
 
@@ -105,57 +111,58 @@ class _loginScreenState extends State<loginScreen> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.blueGrey,
+      backgroundColor: Colors.grey[900],
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-              color: Colors.blueGrey,
+              //color: Colors.blueGrey,
               child: Padding(
-                padding: const EdgeInsets.all(36.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                          height: 200,
-                          child: Image.asset(
-                            "assets/logo_ticnoticos_2.png",
-                            fit: BoxFit.contain,
-                          )),
-                      SizedBox(height: 45),
-                      emailField,
-                      SizedBox(height: 25),
-                      passwordField,
-                      SizedBox(height: 35),
-                      loginButton,
-                      SizedBox(height: 15),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text("¿No tienes una cuenta?"),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            RegistrationScreen()));
-                              },
-                              child: Text(
-                                " Registrate",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 15),
-                              ),
-                            )
-                          ])
-                    ],
-                  ),
-                ),
-              )),
+            padding: const EdgeInsets.all(36.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                      height: 200,
+                      child: Image.asset(
+                        "assets/logo_cursin_main.png",
+                        fit: BoxFit.contain,
+                      )),
+                  SizedBox(height: 40),
+                  emailField,
+                  SizedBox(height: 25),
+                  passwordField,
+                  SizedBox(height: 35),
+                  loginButton,
+                  SizedBox(height: 15),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text("¿No tienes una cuenta? ",
+                            style: TextStyle(color: Colors.white38)),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        RegistrationScreen()));
+                          },
+                          child: Text(
+                            " Registrate",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 15),
+                          ),
+                        )
+                      ])
+                ],
+              ),
+            ),
+          )),
         ),
       ),
     );
