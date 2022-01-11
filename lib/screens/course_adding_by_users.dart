@@ -80,6 +80,7 @@ class addcoursebyusers extends StatelessWidget {
                   'urlCourse': urlCourse.text,
                   'valCourse': valCourse.text,
                   'imgUrlCourse': imgUrlCourse.text,
+                  'certCourse': certCourse.text
                 }).whenComplete(() {
                   Navigator.pushReplacement(
                       context, MaterialPageRoute(builder: (_) => HomeScreen()));
@@ -118,6 +119,19 @@ class addcoursebyusers extends StatelessWidget {
                 controller: entCourse,
                 decoration: InputDecoration(
                   hintText: 'Entidad del curso',
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 5.0),
+              //decoration: BoxDecoration(border: Border.all()),
+              child: TextField(
+                controller: certCourse,
+                decoration: InputDecoration(
+                  hintText: '¿Certificable?',
                 ),
               ),
             ),

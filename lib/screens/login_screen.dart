@@ -3,6 +3,7 @@ import 'package:cursin/screens/registration_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen.dart';
 
 // ignore: camel_case_types
@@ -175,6 +176,10 @@ class _loginScreenState extends State<loginScreen> {
   //login function
   void signIn(String email, String password) async {
     if (_formKey.currentState!.validate()) {
+      //SHARED PREFERENCES TO KEEP USER LOGED IN
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.setString('email', emailController.text);
+
       await _auth
           .signInWithEmailAndPassword(email: email, password: password)
           .then((uid) => {

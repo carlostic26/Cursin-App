@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'course_edit.dart';
 import 'home_screen.dart';
 
 class infocourse extends StatefulWidget {
@@ -21,15 +22,6 @@ class _infocourseState extends State<infocourse> {
   TextEditingController valCourse = TextEditingController();
   TextEditingController imgUrlCourse = TextEditingController();
 
-  /*  
-  String nameCourse = TextEditingController().text;
-  String entCourse = TextEditingController().text;
-  String descCourse = TextEditingController().text;
-  String urlCourse = TextEditingController().text;
-  String valCourse = TextEditingController().text;
-  String imgUrlCourse = TextEditingController().text;
-  */
-
   @override
   void initState() {
     nameCourse = TextEditingController(text: widget.docid.get('nameCourse'));
@@ -43,6 +35,7 @@ class _infocourseState extends State<infocourse> {
   }
 
   Widget build(BuildContext context) {
+    TextEditingController pass = TextEditingController();
     return Scaffold(
       backgroundColor: Colors.blueGrey,
       appBar: AppBar(

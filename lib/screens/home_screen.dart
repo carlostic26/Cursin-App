@@ -3,12 +3,14 @@ import 'package:cursin/model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/material/drawer_header.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'course_adding.dart';
 import 'course_adding_by_users.dart';
 import 'course_edit.dart';
 import 'course_information.dart';
+import 'info_app.dart';
 import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,6 +21,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // get email to check login
+  String email = "";
+  //keep sesion loged in
+  Future getEmail() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      email = preferences.getString('email')!;
+    });
+  }
+
   final Stream<QuerySnapshot>
       _usersStream = //Aqui va y busca en firestore esta colleccion para mostrarla
       FirebaseFirestore.instance.collection('cursos').snapshots();
@@ -29,6 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    getEmail();
+
     FirebaseFirestore.instance
         .collection("users")
         .doc(user!.uid)
@@ -41,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController passEdit = TextEditingController();
     return Scaffold(
       backgroundColor: Colors.grey[850],
       floatingActionButton: FloatingActionButton(
@@ -51,6 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
           */
 
+          //Al presionar en el boton flotante primero muestra aviso de agregar cursos
           _showDialog(context);
         },
         child: Icon(
@@ -101,6 +117,64 @@ class _HomeScreenState extends State<HomeScreen> {
                                   infocourse(docid: snapshot.data!.docs[index]),
                         ),
                       ); //paso a la otra pantalla
+                    },
+                    onDoubleTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return SimpleDialog(children: <Widget>[
+                              Container(
+                                child: TextField(
+                                  controller: passEdit,
+                                  decoration: InputDecoration(
+                                    hintText: 'Pass to edit',
+                                  ),
+                                ),
+                              ),
+                              //boton aceptar pass
+                              Container(
+                                alignment: Alignment.topCenter,
+                                padding: EdgeInsets.symmetric(horizontal: 5.0),
+                                child: ElevatedButton(
+                                    style: ButtonStyle(
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(18.0),
+                                          side: BorderSide(
+                                            color: Colors.blueAccent,
+                                            width: 2.0,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'ok',
+                                      style: TextStyle(
+                                          fontSize: 15, color: Colors.white),
+                                    ),
+                                    //when user press "De acuerdo", it wil continue to add course dialog to pass another screen
+                                    onPressed: () => {
+                                          if (passEdit.text == "6819")
+                                            {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (_) => //aqui al tocar item de lista se pasa a su respectiva pantalla de editar
+                                                          //que puede ser reemplazada por la de INFO CURSO en completos
+                                                          editcourse(
+                                                              docid: snapshot
+                                                                  .data!
+                                                                  .docs[index]),
+                                                ),
+                                              )
+                                            }
+                                        }),
+                              ),
+                            ]);
+                          });
                     },
                     child: Column(
                       children: [
@@ -164,10 +238,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   Text(
-                                    "Valoración: ${snapshot.data!.docChanges[index].doc["valCourse"]}/10",
+                                    "Certificable: ${snapshot.data!.docChanges[index].doc["certCourse"]}",
                                     style: TextStyle(
                                       fontSize: 8,
-                                      color: Colors.yellowAccent,
+                                      color: Colors.greenAccent,
                                     ),
                                   ),
                                 ],
@@ -200,13 +274,20 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           children: <Widget>[
             UserAccountsDrawerHeader(
-              accountName: Text(loggedInUser.name.toString()),
-              accountEmail: Text(loggedInUser.email.toString()),
-              currentAccountPicture: Image.network(
-                  "https://www.homestaynetwork.org/wp-content/uploads/2016/05/students-icon.png"),
+              accountName: Text(
+                loggedInUser.name.toString(),
+                style: TextStyle(color: Colors.black),
+              ),
+              accountEmail: Text(
+                loggedInUser.email.toString(),
+                style: TextStyle(color: Colors.black),
+              ),
+              currentAccountPicture: Image.asset('assets/icon/ic_launcher.png'),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [Colors.blueAccent, Colors.grey.shade900]),
+                gradient: LinearGradient(colors: [
+                  Colors.blueGrey,
+                  Colors.blueAccent,
+                ]),
               ),
             ),
 
@@ -263,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: Text("Añadir un curso",
                     style: TextStyle(color: Colors.white)),
                 leading: Icon(
-                  Icons.school,
+                  Icons.add,
                   color: Colors.white,
                 ),
                 //at press, run the method
@@ -402,7 +483,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.white,
               ),
               //at press, run the method
-              onTap: () => showHome(context),
+              onTap: () => {showinfo(context)},
             ),
             ListTile(
               //Dialogo que los manda a la play store pidiendo reseña
@@ -459,7 +540,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 10.0,
                   child: ListTile(
                       title: Text(""),
-                      //leading: Icon(Icons.add),
                       onTap: () {
                         showDialog(
                             context: context,
@@ -561,8 +641,26 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.pop(context);
   }
 
+  void showinfo(BuildContext context) {
+    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (_) => //aqui al tocar item de lista se pasa a su respectiva pantalla de editar
+                //que puede ser reemplazada por la de INFO CURSO en completos
+                infoApp(context),
+      ),
+    );
+  }
+
   Future<void> logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
+
+    //Logout in 'keep user loged in'
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.remove('email');
+
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => loginScreen()));
   }

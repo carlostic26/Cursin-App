@@ -10,7 +10,7 @@ class addcourse extends StatelessWidget {
   TextEditingController certCourse = TextEditingController();
   TextEditingController descCourse = TextEditingController();
   TextEditingController urlCourse = TextEditingController();
-  TextEditingController valCourse = TextEditingController();
+
   TextEditingController imgUrlCourse = TextEditingController();
 
   //crea una nueva coleccion el firestore database llamada cursos, igual que como se hizo con usuarios
@@ -29,7 +29,6 @@ class addcourse extends StatelessWidget {
                   entCourse.text == '' ||
                   descCourse.text == '' ||
                   urlCourse.text == '' ||
-                  valCourse.text == '' ||
                   imgUrlCourse.text == '' ||
                   certCourse.text == '') {
                 showDialog(
@@ -37,8 +36,7 @@ class addcourse extends StatelessWidget {
                     builder: (BuildContext context) {
                       return SimpleDialog(children: <Widget>[
                         ListTile(
-                            title: Text(
-                                "Te faltaron uno o mas campos por llenar. "),
+                            title: Text("No puedes dejar campos vacíos."),
                             leading: Icon(CupertinoIcons.exclamationmark),
                             onTap: () {
                               Navigator.pop(context);
@@ -77,8 +75,8 @@ class addcourse extends StatelessWidget {
                   'entCourse': entCourse.text,
                   'descCourse': descCourse.text,
                   'urlCourse': urlCourse.text,
-                  'valCourse': valCourse.text,
                   'imgUrlCourse': imgUrlCourse.text,
+                  'certCourse': certCourse.text
                 }).whenComplete(() {
                   Navigator.pushReplacement(
                       context, MaterialPageRoute(builder: (_) => HomeScreen()));
@@ -127,6 +125,19 @@ class addcourse extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 5.0),
               //decoration: BoxDecoration(border: Border.all()),
               child: TextField(
+                controller: certCourse,
+                decoration: InputDecoration(
+                  hintText: '¿Certificable?',
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 5.0),
+              //decoration: BoxDecoration(border: Border.all()),
+              child: TextField(
                 controller: urlCourse,
                 decoration: InputDecoration(
                   hintText: 'Url del curso',
@@ -143,19 +154,6 @@ class addcourse extends StatelessWidget {
                 controller: imgUrlCourse,
                 decoration: InputDecoration(
                   hintText: 'Url imagen del curso',
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 5.0),
-              //decoration: BoxDecoration(border: Border.all()),
-              child: TextField(
-                controller: valCourse,
-                decoration: InputDecoration(
-                  hintText: 'Valoración del curso 1-10',
                 ),
               ),
             ),
